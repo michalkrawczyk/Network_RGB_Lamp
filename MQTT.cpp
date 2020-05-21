@@ -2,6 +2,12 @@
 #include "Esp.h"
 #include <sstream>
 
+#include "Network_Settings.h" // this file contains Network and MQTT Setup Settings
+/* Note: That file includes: 
+*(#define) WLAN_SSID, WLAN_PASS, IO_SERVER, IO_PORT, IO_USER, IO_KEY, IO_ERROR_FEED
+*/
+
+
 static std::string feedToString(const std::string &feed_name);
 
 template <typename T>

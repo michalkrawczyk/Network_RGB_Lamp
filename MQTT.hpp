@@ -1,21 +1,6 @@
 #ifndef MQTT_H
 #define MQTT_H
 
-/************************************************
- *  WLAN Access Setup
- ***********************************************/
-#define WLAN_SSID       "SSID"
-#define WLAN_PASS       "Password"
-
-/************************************************
- *  Broker Server Setup
- ***********************************************/
-#define IO_SERVER       "io.adafruit.com"
-#define IO_PORT         1883
-#define IO_USER         "Username"
-#define IO_KEY          "Key"
-
-#define IO_ERROR_FEED   "/errors"
 
 /************************************************
  *  Libraries
