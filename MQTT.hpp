@@ -5,6 +5,11 @@
 /************************************************
  *  Libraries
  ***********************************************/
+#include "Network_Settings.h" // this file contains Network and MQTT Setup Settings
+/* Note: That file includes: 
+*(#define) WLAN_SSID, WLAN_PASS, IO_SERVER, IO_PORT, IO_USER, IO_KEY, IO_ERROR_FEED
+*/
+
 #ifndef Adafruit_MQTT_Client
 #include <Adafruit_MQTT_Client.h>
 #endif
@@ -30,13 +35,13 @@ namespace Connection
     enum class SignalCode : uint8_t;
 
     #ifdef ESP8266
-    inline namespace ESP
+    inline namespace Esp
     {
         void connectWLAN();
         bool connectBrokerMQTT();
 
         class MqttListenDevice;
-    }
+    }// namespace Esp
     #endif //ESP8266
     
     
@@ -53,7 +58,7 @@ enum class Connection::SignalCode : uint8_t
 
 #ifdef ESP8266
 
-class Connection::ESP::MqttListenDevice final
+class Connection::Esp::MqttListenDevice final
 {
     public:
     explicit MqttListenDevice(const uint8_t &device_id, const std::string &feed_name);

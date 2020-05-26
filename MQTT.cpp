@@ -26,10 +26,9 @@ namespace Connection{
                                     IO_PORT,
                                     IO_USER,
                                     IO_KEY);
-    
 
 #ifdef ESP8266
-    inline namespace ESP
+    inline namespace Esp
     {
         void connectWLAN()
         {
@@ -50,13 +49,9 @@ namespace Connection{
                 {
                     Serial.println();
                     Serial.println("Break for sleep - 5 s");
-                    //TODO: Configure Watchdog
-                    // ESP.deepSleep(5000000); //go to deep sleep for 5 s
 
                     Serial.print("Retrying to establish connection");
-                    // retries = max_retries;
-
-                    while(1);   //Wait for watchdog (temporary)
+                    retries = max_retries;
                 }
         
             }
@@ -87,15 +82,12 @@ namespace Connection{
                 Serial.println("Retrying MQTT connection in 5 seconds...");
                 mqtt.disconnect();
 
-                // ESP.wdtFeed(); //feed to avoid reseting during reconnect
                 delay(5000); //TODO: Consider changing to sleep function
                 retries--;
                 
 
                 if (!retries) 
                 {
-                    // lamp.setColorLED(1, Adafruit_NeoPixel::Color(255,163,0), true);
-                    // while (1); // wait for reset from WDT
                     return false;
                 }
             }
@@ -150,8 +142,6 @@ namespace Connection{
                 }
             }
             return false;
-            //how to make system ready for dynamic number of variables and chars?
-            //and do dynamicly operations with them?
         }
 
         bool MqttListenDevice::retainConnection()
@@ -170,7 +160,7 @@ namespace Connection{
         {
             return _last_msg;
         }
-    } //inline namespace ESP
+    } //inline namespace Esp
 
 }//namespace Connection
 #endif //ifdef ESP8266

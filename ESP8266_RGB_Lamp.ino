@@ -3,7 +3,7 @@
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_Client.h"
 
-#include "LED_WS2812B.hpp"
+#include "WS2812B.hpp"
 #include "MQTT.hpp"
 
 
@@ -42,10 +42,15 @@ void setup() {
  *  CODE LOOP
  ***********************************************/
 void loop() {
-  Connection::connectBrokerMQTT();
+  if(!Connection::connectBrokerMQTT())
+  {
+    lamp.setColorLED(1, Adafruit_NeoPixel::Color(255,163,0), true); //orange color to show mqtt error
+    return;
+  }
   if(!lamp.getColorFromPixel(0)) //if there's no color set
   {
     lamp.setColorLED(0, Adafruit_NeoPixel::Color(0,30,0), true); //set one to green color to show availabilty
+    lamp.setColorLED(1, Adafruit_NeoPixel::Color(0,0,0), true); //reset orange led if turned on
   }
 
   int result(0);
@@ -58,7 +63,8 @@ void loop() {
     {
       if((red | blue | green) >= 0 && (red | blue | green) < 256) //If all are in range of uint8_t - change color
       {
-        lamp.setNewColorToAllPixels(Adafruit_NeoPixel::Color(red, green, blue), 30);
+        lamp.setNewColorToAllPixels(Adafruit_NeoPixel::Color(red, green, blue), 20);
+        dev.sendError(Connection::SignalCode::NO_ERROR);
       }
       else
       {
@@ -74,5 +80,4 @@ void loop() {
   {
     dev.retainConnection();
   }
-  
 }
