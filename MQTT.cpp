@@ -27,6 +27,8 @@ namespace Connection{
                                     IO_USER,
                                     IO_KEY);
 
+    extern SignalCode last_signal{SignalCode::NO_ERROR};
+
 #ifdef ESP8266
     inline namespace Esp
     {
@@ -42,6 +44,7 @@ namespace Connection{
             {
                 delay(500);
                 Serial.print(".");
+//                ESP.wdtFeed(); //feed to avoid reset during connection establishing
         
                 retries--;
 
@@ -49,6 +52,10 @@ namespace Connection{
                 {
                     Serial.println();
                     Serial.println("Break for sleep - 5 s");
+                    
+//                    ESP.deepSleep(5000000); //go to deep sleep for 5 s
+//                    ESP.reset();
+
 
                     Serial.print("Retrying to establish connection");
                     retries = max_retries;
@@ -82,6 +89,7 @@ namespace Connection{
                 Serial.println("Retrying MQTT connection in 5 seconds...");
                 mqtt.disconnect();
 
+//                ESP.wdtFeed(); //feed to avoid reseting during reconnect
                 delay(5000); //TODO: Consider changing to sleep function
                 retries--;
                 
@@ -110,9 +118,9 @@ namespace Connection{
         bool MqttListenDevice::sendError(const SignalCode &err_code)
         {
             
-            std::string msg(to_string(_k_device_id));
+            std::string msg(to_string(static_cast<int>(_k_device_id)));
             //TODO: ADD KEY HERE
-            msg += '/' + to_string(static_cast<uint8_t>(err_code));
+            msg += '/' + to_string(static_cast<int>(err_code));
 
             Serial.print("Signal Sent:");
             Serial.println(msg.c_str());
@@ -154,6 +162,11 @@ namespace Connection{
             }
 
             return result;
+        }
+
+        const bool MqttListenDevice::compareID(const uint8_t &device_id) const
+        {
+            return _k_device_id == device_id;
         }
 
         const std::string MqttListenDevice::getLastMsg() const

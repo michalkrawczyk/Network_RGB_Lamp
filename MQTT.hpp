@@ -34,6 +34,8 @@ namespace Connection
     const uint8_t max_retries(10u);
     enum class SignalCode : uint8_t;
 
+    extern SignalCode last_signal;
+
     #ifdef ESP8266
     inline namespace Esp
     {
@@ -52,6 +54,7 @@ enum class Connection::SignalCode : uint8_t
     NO_ERROR = 0u,
     BAD_PAYLOAD,            //For Incorrect Data in Payload
     BAD_PAYLOAD_SIZE,       //For Incorrect Number of Variables
+    BAD_DEVICE_ID,          //For Commands that are for other Devices
     UNKNOWN_ERROR
 
 };
@@ -67,6 +70,7 @@ class Connection::Esp::MqttListenDevice final
     bool sendAckMsg();
     bool listenForMsg(const int16_t &timeout);
     bool retainConnection();
+    const bool compareID(const uint8_t &device_id) const;
     const std::string getLastMsg() const;
 
     private:

@@ -1,11 +1,8 @@
-#include <ESP8266WiFi.h>
 #include <Esp.h>
-#include "Adafruit_MQTT.h"
-#include "Adafruit_MQTT_Client.h"
 
 #include "WS2812B.hpp"
 #include "MQTT.hpp"
-
+#include "MessageProcessing.hpp"
 
 /************************************************
  *  RGB Lamp Settings
@@ -14,8 +11,6 @@
 #define LED_COUNT      16
 
 WS2812B::RingLED lamp(LED_COUNT, LED_PIN);
-
-int red(0), blue(0), green(0);  //White is not used in WS2812B. Int instead of uint8_t to handle some scanf issues
 
 /************************************************
  *  MQTT INIT
@@ -27,7 +22,7 @@ Connection::MqttListenDevice dev(1, "feeds/lamp");
  *  CODE SETUP
  ***********************************************/
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   delay(10);
 
   lamp.init();
@@ -57,24 +52,17 @@ void loop() {
 
   if(dev.listenForMsg(5000))
   {
-    result = sscanf(dev.getLastMsg().c_str(), "%d,%d,%d", &red, &green, &blue); //not elegant, but sscanf is much faster than streams
-
-    if(result == 3)  
+    if(Msg::dataProcessing(dev.getLastMsg(), lamp, dev, &Connection::last_signal))
     {
-      if((red | blue | green) >= 0 && (red | blue | green) < 256) //If all are in range of uint8_t - change color
-      {
-        lamp.setNewColorToAllPixels(Adafruit_NeoPixel::Color(red, green, blue), 20);
-        dev.sendError(Connection::SignalCode::NO_ERROR);
-      }
-      else
-      {
-        dev.sendError(Connection::SignalCode::BAD_PAYLOAD);
-      }
+      dev.sendAckMsg();
     }
     else
     {
-      dev.sendError(Connection::SignalCode::BAD_PAYLOAD_SIZE);
-    }
+      if(Connection::last_signal != Connection::SignalCode::BAD_DEVICE_ID)
+      {
+        dev.sendError(Connection::last_signal);
+      }
+    }  
   }
   else
   {

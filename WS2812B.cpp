@@ -21,22 +21,11 @@ void RingLED::init()
   Serial.println(F("Lamp Initialization \n"));
   _pixel_matrix.begin();
   _pixel_matrix.show();
-  setBrightness(_brightness);
-
+  _pixel_matrix.setBrightness(_brightness);
+  
   setColorLED(0, _pixel_matrix.Color(153,0,0));
   
   _pixel_matrix.show();
-}
-
-void RingLED::setBrightness(const uint8_t &brightness, const bool &show)
-{
-    _brightness = brightness;
-    _pixel_matrix.setBrightness(_brightness);
-
-    if(show)
-    {
-        _pixel_matrix.show();
-    }
 }
 
 void RingLED::setColorLED(const uint16_t &pixel, const uint32_t &color, const bool &show)

@@ -32,10 +32,7 @@ public:
     explicit RingLED(const uint8_t &led_count = 16,
                      const uint16_t &pin = D6);
     
-    
-
     void init();
-    void setBrightness(const uint8_t &brightness, const bool &show = false);
     void setColorLED(const uint16_t &pixel, const uint32_t &color, const bool &show = false);
     void setNewColorToAllPixels(const uint32_t &color,
                                 const uint16_t &time_delay = 50,
